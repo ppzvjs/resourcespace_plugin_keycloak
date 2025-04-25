@@ -48,20 +48,22 @@ function HookKeycloakAllProvideusercredentials()
             $id_token = $response_data['id_token'];
             $jwt_parts = explode('.', $id_token);
             $jwt_payload = json_decode(base64_decode($jwt_parts[1]), true);
-            //Default Usergroup
-            $usergroup = 2;
             foreach ($jwt_payload['realm_access']['roles'] as $role) {
                 switch ($role) {
                     case 'Administrator':
                         $usergroup = $config['rollmapping_admin'];
-                        break;
+                        break 2;
+
                     case 'Editor':
                         $usergroup = $config['rollmapping_editor'];
-                        break;
+                        break 2;
+
                     default:
-                        $usergroup = $config['rollmapping_default'];
                         break;
                 }
+            }
+            if (!isset($usergroup)) {
+                $usergroup = $config['rollmapping_default'];
             }
             $email = $jwt_payload['email'];
             $fullname = $jwt_payload['name'];
